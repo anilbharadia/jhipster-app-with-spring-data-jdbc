@@ -6,16 +6,12 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <changeSet id="00000000000000" author="jhipster">
-        <createSequence sequenceName="sequence_generator" startValue="1050" incrementBy="50"/>
-    </changeSet>
+<!--    TODO: Replace this with flyway -->
+<!--    TODO: Fix the constraint violation on blank DB when create new user -->
+<!--    TODO: ISSUE: on UI: duplicate role list while creating new user -->
 
-    <!--
-        JHipster core tables.
-        The initial schema has the '00000000000001' id, so that it is over-written if we re-generate it.
-    -->
-    <changeSet id="00000000000001" author="jhipster">
-        <createTable tableName="jhi_user">
+    <changeSet id="10000000000001" author="anil">
+        <createTable tableName="app_user">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -45,75 +41,46 @@
             <column name="last_modified_by" type="varchar(50)"/>
             <column name="last_modified_date" type="timestamp"/>
         </createTable>
+        <addAutoIncrement tableName="app_user" columnName="id" startWith="1001" />
 
-        <createTable tableName="jhi_authority">
-            <column name="name" type="varchar(50)">
+        <createTable tableName="user_authority">
+            <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-        </createTable>
-
-        <createTable tableName="jhi_user_authority">
             <column name="user_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="authority_name" type="varchar(50)">
+            <column name="name" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
-
-        <addPrimaryKey columnNames="user_id, authority_name" tableName="jhi_user_authority"/>
-
-        <addForeignKeyConstraint baseColumnNames="authority_name"
-                                 baseTableName="jhi_user_authority"
-                                 constraintName="fk_authority_name"
-                                 referencedColumnNames="name"
-                                 referencedTableName="jhi_authority"/>
+        <addAutoIncrement tableName="user_authority" columnName="id" startWith="1001"/>
 
         <addForeignKeyConstraint baseColumnNames="user_id"
-                                 baseTableName="jhi_user_authority"
+                                 baseTableName="user_authority"
                                  constraintName="fk_user_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="jhi_user"/>
+                                 referencedTableName="app_user"/>
 
         <addNotNullConstraint   columnName="password_hash"
                                 columnDataType="varchar(60)"
-                                tableName="jhi_user"/>
+                                tableName="app_user"/>
         <loadData
-                  file="config/liquibase/data/user.csv"
-                  separator=";"
-                  tableName="jhi_user">
+            file="config/liquibase/data/user.csv"
+            separator=";"
+            tableName="app_user">
             <column name="id" type="numeric"/>
             <column name="activated" type="boolean"/>
             <column name="created_date" type="timestamp"/>
         </loadData>
-        <dropDefaultValue tableName="jhi_user" columnName="created_date" columnDataType="${datetimeType}"/>
-        <loadData
-                  file="config/liquibase/data/authority.csv"
-                  separator=";"
-                  tableName="jhi_authority">
-            <column name="name" type="string"/>
-        </loadData>
+        <dropDefaultValue tableName="app_user" columnName="created_date" columnDataType="${datetimeType}"/>
 
         <loadData
-                  file="config/liquibase/data/user_authority.csv"
-                  separator=";"
-                  tableName="jhi_user_authority">
+            file="config/liquibase/data/user_authority_data.csv"
+            separator=";"
+            tableName="user_authority">
             <column name="user_id" type="numeric"/>
+            <column name="id" type="numeric"/>
         </loadData>
-    </changeSet>
-
-    <changeSet author="jhipster" id="00000000000002" context="test">
-        <createTable tableName="jhi_date_time_wrapper">
-            <column  name="id" type="BIGINT">
-                <constraints primaryKey="true" primaryKeyName="jhi_date_time_wrapperPK"/>
-            </column>
-            <column name="instant" type="timestamp"/>
-            <column name="local_date_time" type="timestamp"/>
-            <column name="offset_date_time" type="timestamp"/>
-            <column name="zoned_date_time" type="timestamp"/>
-            <column name="local_time" type="time"/>
-            <column name="offset_time" type="time"/>
-            <column name="local_date" type="date"/>
-        </createTable>
     </changeSet>
 </databaseChangeLog>

@@ -46,7 +46,7 @@ class UserJWTControllerIT {
         user.setActivated(true);
         user.setPassword(passwordEncoder.encode("test"));
 
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
 
         LoginVM login = new LoginVM();
         login.setUsername("user-jwt-controller");
@@ -69,7 +69,7 @@ class UserJWTControllerIT {
         user.setActivated(true);
         user.setPassword(passwordEncoder.encode("test"));
 
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
 
         LoginVM login = new LoginVM();
         login.setUsername("user-jwt-controller-remember-me");

@@ -198,6 +198,10 @@ dependencies {
         implementation platform("tech.jhipster:jhipster-dependencies:${jhipsterDependenciesVersion}")
     }
 
+    compileOnly "org.projectlombok:lombok:1.18.20"
+    annotationProcessor "org.projectlombok:lombok:1.18.20"
+    implementation "org.springframework.boot:spring-boot-starter-data-jdbc"
+
     // Use ", version: jhipsterDependenciesVersion, changing: true" if you want
     // to use a SNAPSHOT release instead of a stable release
     implementation group: "tech.jhipster", name: "jhipster-framework"

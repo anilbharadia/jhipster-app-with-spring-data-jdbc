@@ -77,7 +77,7 @@ class UserServiceIT {
     @Test
     @Transactional
     void assertThatUserMustExistToResetPassword() {
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
         Optional<User> maybeUser = userService.requestPasswordReset("invalid.login@localhost");
         assertThat(maybeUser).isNotPresent();
 
@@ -92,7 +92,7 @@ class UserServiceIT {
     @Transactional
     void assertThatOnlyActivatedUserCanRequestPasswordReset() {
         user.setActivated(false);
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
 
         Optional<User> maybeUser = userService.requestPasswordReset(user.getLogin());
         assertThat(maybeUser).isNotPresent();
@@ -107,7 +107,7 @@ class UserServiceIT {
         user.setActivated(true);
         user.setResetDate(daysAgo);
         user.setResetKey(resetKey);
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
 
         Optional<User> maybeUser = userService.completePasswordReset("johndoe2", user.getResetKey());
         assertThat(maybeUser).isNotPresent();
@@ -121,7 +121,7 @@ class UserServiceIT {
         user.setActivated(true);
         user.setResetDate(daysAgo);
         user.setResetKey("1234");
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
 
         Optional<User> maybeUser = userService.completePasswordReset("johndoe2", user.getResetKey());
         assertThat(maybeUser).isNotPresent();
@@ -137,7 +137,7 @@ class UserServiceIT {
         user.setActivated(true);
         user.setResetDate(daysAgo);
         user.setResetKey(resetKey);
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
 
         Optional<User> maybeUser = userService.completePasswordReset("johndoe2", user.getResetKey());
         assertThat(maybeUser).isPresent();
@@ -155,9 +155,9 @@ class UserServiceIT {
         when(dateTimeProvider.getNow()).thenReturn(Optional.of(now.minus(4, ChronoUnit.DAYS)));
         user.setActivated(false);
         user.setActivationKey(RandomStringUtils.random(20));
-        User dbUser = userRepository.saveAndFlush(user);
+        User dbUser = userRepository.save(user);
         dbUser.setCreatedDate(now.minus(4, ChronoUnit.DAYS));
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
         Instant threeDaysAgo = now.minus(3, ChronoUnit.DAYS);
         List<User> users = userRepository.findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(threeDaysAgo);
         assertThat(users).isNotEmpty();
@@ -172,9 +172,9 @@ class UserServiceIT {
         Instant now = Instant.now();
         when(dateTimeProvider.getNow()).thenReturn(Optional.of(now.minus(4, ChronoUnit.DAYS)));
         user.setActivated(false);
-        User dbUser = userRepository.saveAndFlush(user);
+        User dbUser = userRepository.save(user);
         dbUser.setCreatedDate(now.minus(4, ChronoUnit.DAYS));
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
         Instant threeDaysAgo = now.minus(3, ChronoUnit.DAYS);
         List<User> users = userRepository.findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(threeDaysAgo);
         assertThat(users).isEmpty();

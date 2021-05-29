@@ -2,9 +2,13 @@ package com.anilb.myrestservice.web.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.anilb.myrestservice.IntegrationTest;
 import com.anilb.myrestservice.domain.Authority;
@@ -12,12 +16,16 @@ import com.anilb.myrestservice.domain.User;
 import com.anilb.myrestservice.repository.UserRepository;
 import com.anilb.myrestservice.security.AuthoritiesConstants;
 import com.anilb.myrestservice.service.dto.AdminUserDTO;
-import com.anilb.myrestservice.service.dto.UserDTO;
 import com.anilb.myrestservice.service.mapper.UserMapper;
+import com.anilb.myrestservice.util.Iterables;
 import com.anilb.myrestservice.web.rest.vm.ManagedUserVM;
 import java.time.Instant;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,7 +84,7 @@ class UserResourceIT {
 
     /**
      * Create a User.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which has a required relationship to the User entity.
      */
@@ -111,7 +119,7 @@ class UserResourceIT {
     @Test
     @Transactional
     void createUser() throws Exception {
-        int databaseSizeBeforeCreate = userRepository.findAll().size();
+        int databaseSizeBeforeCreate = (int) Iterables.stream(userRepository.findAll()).count();
 
         // Create the User
         ManagedUserVM managedUserVM = new ManagedUserVM();
@@ -149,7 +157,7 @@ class UserResourceIT {
     @Test
     @Transactional
     void createUserWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = userRepository.findAll().size();
+        int databaseSizeBeforeCreate = (int) Iterables.stream(userRepository.findAll()).count();
 
         ManagedUserVM managedUserVM = new ManagedUserVM();
         managedUserVM.setId(DEFAULT_ID);
@@ -178,8 +186,8 @@ class UserResourceIT {
     @Transactional
     void createUserWithExistingLogin() throws Exception {
         // Initialize the database
-        userRepository.saveAndFlush(user);
-        int databaseSizeBeforeCreate = userRepository.findAll().size();
+        userRepository.save(user);
+        int databaseSizeBeforeCreate = (int) Iterables.stream(userRepository.findAll()).count();
 
         ManagedUserVM managedUserVM = new ManagedUserVM();
         managedUserVM.setLogin(DEFAULT_LOGIN); // this login should already be used
@@ -207,8 +215,8 @@ class UserResourceIT {
     @Transactional
     void createUserWithExistingEmail() throws Exception {
         // Initialize the database
-        userRepository.saveAndFlush(user);
-        int databaseSizeBeforeCreate = userRepository.findAll().size();
+        userRepository.save(user);
+        int databaseSizeBeforeCreate = (int) Iterables.stream(userRepository.findAll()).count();
 
         ManagedUserVM managedUserVM = new ManagedUserVM();
         managedUserVM.setLogin("anotherlogin");
@@ -236,7 +244,7 @@ class UserResourceIT {
     @Transactional
     void getAllUsers() throws Exception {
         // Initialize the database
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
 
         // Get all the users
         restUserMockMvc
@@ -255,7 +263,7 @@ class UserResourceIT {
     @Transactional
     void getUser() throws Exception {
         // Initialize the database
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
 
         // Get the user
         restUserMockMvc
@@ -280,8 +288,8 @@ class UserResourceIT {
     @Transactional
     void updateUser() throws Exception {
         // Initialize the database
-        userRepository.saveAndFlush(user);
-        int databaseSizeBeforeUpdate = userRepository.findAll().size();
+        userRepository.save(user);
+        int databaseSizeBeforeUpdate = (int) Iterables.stream(userRepository.findAll()).count();
 
         // Update the user
         User updatedUser = userRepository.findById(user.getId()).get();
@@ -326,8 +334,8 @@ class UserResourceIT {
     @Transactional
     void updateUserLogin() throws Exception {
         // Initialize the database
-        userRepository.saveAndFlush(user);
-        int databaseSizeBeforeUpdate = userRepository.findAll().size();
+        userRepository.save(user);
+        int databaseSizeBeforeUpdate = (int) Iterables.stream(userRepository.findAll()).count();
 
         // Update the user
         User updatedUser = userRepository.findById(user.getId()).get();
@@ -373,7 +381,7 @@ class UserResourceIT {
     @Transactional
     void updateUserExistingEmail() throws Exception {
         // Initialize the database with 2 users
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
 
         User anotherUser = new User();
         anotherUser.setLogin("jhipster");
@@ -384,7 +392,7 @@ class UserResourceIT {
         anotherUser.setLastName("hipster");
         anotherUser.setImageUrl("");
         anotherUser.setLangKey("en");
-        userRepository.saveAndFlush(anotherUser);
+        userRepository.save(anotherUser);
 
         // Update the user
         User updatedUser = userRepository.findById(user.getId()).get();
@@ -416,7 +424,7 @@ class UserResourceIT {
     @Transactional
     void updateUserExistingLogin() throws Exception {
         // Initialize the database
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
 
         User anotherUser = new User();
         anotherUser.setLogin("jhipster");
@@ -427,7 +435,7 @@ class UserResourceIT {
         anotherUser.setLastName("hipster");
         anotherUser.setImageUrl("");
         anotherUser.setLangKey("en");
-        userRepository.saveAndFlush(anotherUser);
+        userRepository.save(anotherUser);
 
         // Update the user
         User updatedUser = userRepository.findById(user.getId()).get();
@@ -459,8 +467,8 @@ class UserResourceIT {
     @Transactional
     void deleteUser() throws Exception {
         // Initialize the database
-        userRepository.saveAndFlush(user);
-        int databaseSizeBeforeDelete = userRepository.findAll().size();
+        userRepository.save(user);
+        int databaseSizeBeforeDelete = (int) Iterables.stream(userRepository.findAll()).count();
 
         // Delete the user
         restUserMockMvc
@@ -568,6 +576,6 @@ class UserResourceIT {
     }
 
     private void assertPersistedUsers(Consumer<List<User>> userAssertion) {
-        userAssertion.accept(userRepository.findAll());
+        userAssertion.accept(Iterables.stream(userRepository.findAll()).collect(Collectors.toList()));
     }
 }

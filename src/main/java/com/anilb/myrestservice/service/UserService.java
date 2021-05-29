@@ -9,6 +9,7 @@ import com.anilb.myrestservice.security.AuthoritiesConstants;
 import com.anilb.myrestservice.security.SecurityUtils;
 import com.anilb.myrestservice.service.dto.AdminUserDTO;
 import com.anilb.myrestservice.service.dto.UserDTO;
+import com.anilb.myrestservice.util.Iterables;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -137,7 +138,6 @@ public class UserService {
             return false;
         }
         userRepository.delete(existingUser);
-        userRepository.flush();
         return true;
     }
 
@@ -161,13 +161,7 @@ public class UserService {
         user.setResetDate(Instant.now());
         user.setActivated(true);
         if (userDTO.getAuthorities() != null) {
-            Set<Authority> authorities = userDTO
-                .getAuthorities()
-                .stream()
-                .map(authorityRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet());
+            Set<Authority> authorities = userDTO.getAuthorities().stream().map(Authority::new).collect(Collectors.toSet());
             user.setAuthorities(authorities);
         }
         userRepository.save(user);
@@ -281,12 +275,12 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Optional<User> getUserWithAuthoritiesByLogin(String login) {
-        return userRepository.findOneWithAuthoritiesByLogin(login);
+        return userRepository.findOneByLogin(login);
     }
 
     @Transactional(readOnly = true)
     public Optional<User> getUserWithAuthorities() {
-        return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneWithAuthoritiesByLogin);
+        return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneByLogin);
     }
 
     /**
@@ -312,6 +306,6 @@ public class UserService {
      */
     @Transactional(readOnly = true)
     public List<String> getAuthorities() {
-        return authorityRepository.findAll().stream().map(Authority::getName).collect(Collectors.toList());
+        return Iterables.stream(authorityRepository.findAll()).map(Authority::getName).collect(Collectors.toList());
     }
 }

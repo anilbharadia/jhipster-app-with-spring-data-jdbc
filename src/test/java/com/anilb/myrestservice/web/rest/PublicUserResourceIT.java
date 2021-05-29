@@ -49,7 +49,7 @@ class PublicUserResourceIT {
     @Transactional
     void getAllPublicUsers() throws Exception {
         // Initialize the database
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
 
         // Get all the users
         restUserMockMvc
@@ -77,7 +77,7 @@ class PublicUserResourceIT {
     @Transactional
     void getAllUsersSortedByParameters() throws Exception {
         // Initialize the database
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
 
         restUserMockMvc.perform(get("/api/users?sort=resetKey,desc").accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
         restUserMockMvc.perform(get("/api/users?sort=password,desc").accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
