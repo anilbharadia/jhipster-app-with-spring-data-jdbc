@@ -1,0 +1,27 @@
+{
+  "myrestserviceApp": {
+    "person": {
+      "home": {
+        "title": "People",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "नवीन Person तयार करा",
+        "createOrEditLabel": "Person तयार किंवा संपादित करा",
+        "notFound": "No People found"
+      },
+      "created": "Person [identifier: {{ param }}] तयार आहे",
+      "updated": "Person [identifier: {{ param }}] सुधारित केले आहे",
+      "deleted": "Person [identifier: {{ param }}] हटविले आहे",
+      "delete": {
+        "question": "Person [id: {{ id }}] काढून टाकण्याबाबत पुष्टी?"
+      },
+      "detail": {
+        "title": "Person"
+      },
+      "id": "ID",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "dateOfBirth": "Date Of Birth",
+      "phoneNumber": "Phone Number"
+    }
+  }
+}

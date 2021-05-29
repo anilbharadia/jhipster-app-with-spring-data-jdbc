@@ -1,0 +1,11 @@
+entity Person {
+	firstName String required,
+    lastName String,
+    dateOfBirth Instant,
+    phoneNumber String,
+    
+}
+
+paginate all with pagination
+
+service all with serviceClass
