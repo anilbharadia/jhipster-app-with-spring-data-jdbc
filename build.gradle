@@ -136,7 +136,7 @@ liquibase {
     activities {
         main {
             driver "org.postgresql.Driver"
-            url "jdbc:postgresql://localhost:5432/myrestservice"
+            url "jdbc:postgresql://localhost:5436/myrestservice"
             username "myrestservice"
             password ""
             changeLogFile "src/main/resources/config/liquibase/master.xml"
@@ -146,7 +146,7 @@ liquibase {
         }
         diffLog {
             driver "org.postgresql.Driver"
-            url "jdbc:postgresql://localhost:5432/myrestservice"
+            url "jdbc:postgresql://localhost:5436/myrestservice"
             username "myrestservice"
             password ""
             changeLogFile project.ext.diffChangelogFile
