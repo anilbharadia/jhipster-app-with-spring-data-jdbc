@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jdbc.repository.config.EnableJdbcAuditing;
@@ -20,7 +19,7 @@ import tech.jhipster.config.DefaultProfileUtil;
 import tech.jhipster.config.JHipsterConstants;
 
 @SpringBootApplication
-@EnableConfigurationProperties({ LiquibaseProperties.class, ApplicationProperties.class })
+@EnableConfigurationProperties({ ApplicationProperties.class })
 @EnableJdbcAuditing
 public class MyrestserviceApp {
 
@@ -103,3 +102,5 @@ public class MyrestserviceApp {
         );
     }
 }
+// TODO : Fix the constraint violation on blank DB when create new user
+// TODO : ISSUE: on UI: duplicate role list while creating new user

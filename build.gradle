@@ -17,7 +17,6 @@ plugins {
     id "com.google.cloud.tools.jib"
     id "com.gorylenko.gradle-git-properties"
     id "com.github.node-gradle.node"
-    id "org.liquibase.gradle"
     id "org.sonarqube"
     id "io.spring.nohttp"
     //jhipster-needle-gradle-plugins - JHipster will add additional gradle plugins here
@@ -130,36 +129,6 @@ if (!project.hasProperty("runList")) {
     project.ext.runList = "main"
 }
 
-project.ext.diffChangelogFile = "src/main/resources/config/liquibase/changelog/" + new Date().format("yyyyMMddHHmmss") + "_changelog.xml"
-
-liquibase {
-    activities {
-        main {
-            driver "org.postgresql.Driver"
-            url "jdbc:postgresql://localhost:5436/myrestservice"
-            username "myrestservice"
-            password ""
-            changeLogFile "src/main/resources/config/liquibase/master.xml"
-            defaultSchemaName ""
-            logLevel "debug"
-            classpath "src/main/resources/"
-        }
-        diffLog {
-            driver "org.postgresql.Driver"
-            url "jdbc:postgresql://localhost:5436/myrestservice"
-            username "myrestservice"
-            password ""
-            changeLogFile project.ext.diffChangelogFile
-            referenceUrl "hibernate:spring:com.anilb.myrestservice.domain?dialect=tech.jhipster.domain.util.FixedPostgreSQL10Dialect&hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy"
-            defaultSchemaName ""
-            logLevel "debug"
-            classpath "$buildDir/classes/java/main"
-        }
-    }
-
-    runList = project.ext.runList
-}
-
 gitProperties {
     failOnNoGitDirectory = false
     keys = ["git.branch", "git.commit.id.abbrev", "git.commit.id.describe"]
@@ -172,18 +141,6 @@ checkstyle {
 }
 nohttp {
     source.include "build.gradle", "README.md"
-}
-
-configurations {
-    providedRuntime
-    implementation.exclude module: "spring-boot-starter-tomcat"
-    all {
-        resolutionStrategy {
-            // Inherited version from Spring Boot can't be used because of regressions:
-            // To be removed as soon as spring-boot use the same version
-            force 'org.liquibase:liquibase-core:4.3.2'
-        }
-    }
 }
 
 repositories {
@@ -201,6 +158,7 @@ dependencies {
     compileOnly "org.projectlombok:lombok:1.18.20"
     annotationProcessor "org.projectlombok:lombok:1.18.20"
     implementation "org.springframework.boot:spring-boot-starter-data-jdbc"
+    implementation "org.flywaydb:flyway-core"
 
     // Use ", version: jhipsterDependenciesVersion, changing: true" if you want
     // to use a SNAPSHOT release instead of a stable release
@@ -220,10 +178,6 @@ dependencies {
     implementation "javax.transaction:javax.transaction-api"
     implementation "org.hibernate:hibernate-entitymanager"
     implementation "org.hibernate.validator:hibernate-validator"
-    implementation "org.liquibase:liquibase-core"
-    liquibaseRuntime "org.liquibase:liquibase-core"
-    liquibaseRuntime "org.liquibase.ext:liquibase-hibernate5:${liquibaseHibernate5Version}"
-    liquibaseRuntime sourceSets.main.compileClasspath
     implementation "org.springframework.boot:spring-boot-loader-tools"
     implementation "org.springframework.boot:spring-boot-starter-mail"
     implementation "org.springframework.boot:spring-boot-starter-logging"
@@ -253,7 +207,6 @@ dependencies {
     implementation ("io.springfox:springfox-swagger2")
     implementation "io.springfox:springfox-bean-validators"
     implementation "org.postgresql:postgresql"
-    liquibaseRuntime "org.postgresql:postgresql"
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
     annotationProcessor "org.hibernate:hibernate-jpamodelgen:${hibernateVersion}"
