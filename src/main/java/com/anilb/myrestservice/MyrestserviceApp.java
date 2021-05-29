@@ -100,4 +100,3 @@ public class MyrestserviceApp {
         }
     }
 }
-// TODO : ISSUE: on UI: duplicate role list while creating new user
