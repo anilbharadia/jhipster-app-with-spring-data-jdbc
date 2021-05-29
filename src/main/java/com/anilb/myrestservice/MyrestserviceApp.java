@@ -100,5 +100,4 @@ public class MyrestserviceApp {
         }
     }
 }
-// TODO : Fix the constraint violation on blank DB when create new user
 // TODO : ISSUE: on UI: duplicate role list while creating new user
