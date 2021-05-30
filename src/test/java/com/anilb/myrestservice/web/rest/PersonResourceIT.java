@@ -2,8 +2,14 @@ package com.anilb.myrestservice.web.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.anilb.myrestservice.IntegrationTest;
 import com.anilb.myrestservice.domain.Person;
@@ -15,7 +21,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,9 +60,6 @@ class PersonResourceIT {
     private PersonRepository personRepository;
 
     @Autowired
-    private EntityManager em;
-
-    @Autowired
     private MockMvc restPersonMockMvc;
 
     private Person person;
@@ -68,7 +70,7 @@ class PersonResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Person createEntity(EntityManager em) {
+    public static Person createEntity() {
         Person person = Person
             .builder()
             .firstName(DEFAULT_FIRST_NAME)
@@ -85,7 +87,7 @@ class PersonResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Person createUpdatedEntity(EntityManager em) {
+    public static Person createUpdatedEntity() {
         Person person = Person
             .builder()
             .firstName(UPDATED_FIRST_NAME)
@@ -98,7 +100,7 @@ class PersonResourceIT {
 
     @BeforeEach
     public void initTest() {
-        person = createEntity(em);
+        person = createEntity();
     }
 
     @Test
@@ -209,7 +211,6 @@ class PersonResourceIT {
         // Update the person
         Person updatedPerson = personRepository.findById(person.getId()).get();
         // Disconnect from session so that the updates on updatedPerson are not directly saved in db
-        em.detach(updatedPerson);
         updatedPerson
             .setFirstName(UPDATED_FIRST_NAME)
             .setLastName(UPDATED_LAST_NAME)

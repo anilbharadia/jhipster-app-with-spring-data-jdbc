@@ -2,14 +2,15 @@ package com.anilb.myrestservice.web.rest;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.anilb.myrestservice.IntegrationTest;
 import com.anilb.myrestservice.domain.User;
 import com.anilb.myrestservice.repository.UserRepository;
 import com.anilb.myrestservice.security.AuthoritiesConstants;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,16 +34,13 @@ class PublicUserResourceIT {
     private UserRepository userRepository;
 
     @Autowired
-    private EntityManager em;
-
-    @Autowired
     private MockMvc restUserMockMvc;
 
     private User user;
 
     @BeforeEach
     public void initTest() {
-        user = UserResourceIT.initTestUser(userRepository, em);
+        user = UserResourceIT.initTestUser(userRepository);
     }
 
     @Test
